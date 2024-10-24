@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MEMBER
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  password_hash String
+  role          Role     @default(MEMBER)
+  created_at    DateTime @default(now())
+
+  Dish Dish[]
+
+  @@map("users")
+}
+
+model Dish {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  ingredients IngredientOnDish[]
+
+  User    User?   @relation(fields: [dish_id], references: [id])
+  dish_id String?
+
+  @@map("dishes")
+}
+
+model Ingredient {
+  id   String @id @default(uuid())
+  name String
+
+  dishes IngredientOnDish[]
+
+  @@map("ingredients")
+}
+
+model IngredientOnDish {
+  id String @id @default(uuid())
+
+  Dish         Dish?       @relation(fields: [dish_id], references: [id])
+  dish_id      String?
+  Ingredient   Ingredient? @relation(fields: [ingredient_id], references: [id])
+  ingredient_id String?
+
+  @@map("ingredients_on_dish")
+}
