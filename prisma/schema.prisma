@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -18,6 +12,12 @@ enum Role {
   MEMBER
 }
 
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String
@@ -26,20 +26,27 @@ model User {
   role          Role     @default(MEMBER)
   created_at    DateTime @default(now())
 
-  Dish Dish[]
+  dishes Dish[]
 
   @@map("users")
 }
 
 model Dish {
-  id          String @id @default(uuid())
-  title       String
-  description String
+  id           String      @id @default(uuid())
+  title        String
+  description  String
+  instructions String
+  duration     Int?
+  difficulty   Difficulty?
+  cost         Float?
+  prep_time    Int?
+  cook_time    Int?
 
-  ingredients IngredientOnDish[]
+  ingredients IngredientsOnDishes[]
+  tags        TagsOnDishes[]
 
-  User    User?   @relation(fields: [dish_id], references: [id])
-  dish_id String?
+  user    User?   @relation(fields: [user_id], references: [id])
+  user_id String?
 
   @@map("dishes")
 }
@@ -47,19 +54,40 @@ model Dish {
 model Ingredient {
   id   String @id @default(uuid())
   name String
+  cost Float?
 
-  dishes IngredientOnDish[]
+  dishes IngredientsOnDishes[]
 
   @@map("ingredients")
 }
 
-model IngredientOnDish {
+model Tag {
+  id    String @id @default(uuid())
+  title String
+
+  dishes TagsOnDishes[]
+
+  @@map("tags")
+}
+
+model IngredientsOnDishes {
   id String @id @default(uuid())
 
-  Dish         Dish?       @relation(fields: [dish_id], references: [id])
-  dish_id      String?
-  Ingredient   Ingredient? @relation(fields: [ingredient_id], references: [id])
+  dish          Dish?       @relation(fields: [dish_id], references: [id])
+  dish_id       String?
+  ingredient    Ingredient? @relation(fields: [ingredient_id], references: [id])
   ingredient_id String?
 
   @@map("ingredients_on_dish")
+}
+
+model TagsOnDishes {
+  id String @id @default(uuid())
+
+  dish    Dish    @relation(fields: [dish_id], references: [id])
+  dish_id String
+  tag     Tag?    @relation(fields: [tagId], references: [id])
+  tagId   String?
+
+  @@map("tags_on_dishes")
 }
