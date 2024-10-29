@@ -46,6 +46,10 @@ export class InMemoryUsersRepository implements UsersRepository {
     return updatedUser
   }
 
+  async delete(id: string) {
+    this.items = this.items.filter((item) => item.id !== id)
+  }
+
   async findByEmail(email: string) {
     const user = this.items.find((item) => item.email === email)
 

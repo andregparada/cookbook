@@ -12,16 +12,6 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
-  async findByEmail(email: string) {
-    const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
-    })
-
-    return user
-  }
-
   async update(data: Prisma.UserUpdateInput) {
     if (!data.id) {
       throw new ResourceNotFoundError()
@@ -39,6 +29,24 @@ export class PrismaUsersRepository implements UsersRepository {
     return user
   }
 
+  async delete(id: string) {
+    await prisma.user.delete({
+      where: {
+        id,
+      },
+    })
+  }
+
+  async findByEmail(email: string) {
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    })
+
+    return user
+  }
+  
   async findById(id: string) {
     const user = await prisma.user.findUnique({
       where: {
