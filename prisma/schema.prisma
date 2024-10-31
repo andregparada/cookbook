@@ -33,7 +33,7 @@ model User {
 
 model Dish {
   id           String      @id @default(uuid())
-  title        String
+  name         String
   description  String
   instructions String
   duration     Int?
@@ -43,7 +43,7 @@ model Dish {
   cook_time    Int?
 
   ingredients IngredientsOnDishes[]
-  tags        TagsOnDishes[]
+  tags        Tag[]
 
   user    User?   @relation(fields: [user_id], references: [id])
   user_id String?
@@ -65,13 +65,14 @@ model Tag {
   id    String @id @default(uuid())
   title String
 
-  dishes TagsOnDishes[]
+  dishes Dish[]
 
   @@map("tags")
 }
 
 model IngredientsOnDishes {
-  id String @id @default(uuid())
+  id       String @id @default(uuid())
+  quantity Float
 
   dish          Dish?       @relation(fields: [dish_id], references: [id])
   dish_id       String?
@@ -79,15 +80,4 @@ model IngredientsOnDishes {
   ingredient_id String?
 
   @@map("ingredients_on_dish")
-}
-
-model TagsOnDishes {
-  id String @id @default(uuid())
-
-  dish    Dish    @relation(fields: [dish_id], references: [id])
-  dish_id String
-  tag     Tag?    @relation(fields: [tagId], references: [id])
-  tagId   String?
-
-  @@map("tags_on_dishes")
 }
