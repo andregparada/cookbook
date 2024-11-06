@@ -54,18 +54,6 @@ export class CreateDishUseCase {
       throw new ResourceNotFoundError()
     }
 
-    const tagConnections = await Promise.all(
-      tags.map(async (tag) => {
-        let tagRecord = await this.tagsRepository.findByTitle(tag.title)
-
-        if (!tagRecord) {
-          tagRecord = await this.tagsRepository.create({ title: tag.title })
-        }
-
-        return { id: tagRecord.id }
-      }),
-    )
-
     const dish = await this.dishesRepository.create({
       name,
       description,
@@ -76,9 +64,6 @@ export class CreateDishUseCase {
       prep_time: prepTime,
       cook_time: cookTime,
       user_id: userId,
-      tags: {
-        connect: tagConnections,
-      },
     })
 
     await Promise.all(
@@ -96,6 +81,18 @@ export class CreateDishUseCase {
         })
       }),
     )
+
+    tags.map(async (tag) => {
+      let tagId = await this.tagsRepository.findByTitle(tag.title)
+
+      if (!tagId) {
+        tagId = await this.tagsRepository.create({
+          title: tag.title,
+        })
+
+        await this.tagsRepository.connect(tagId.id, dish.id)
+      }
+    })
 
     return { dish }
   }
