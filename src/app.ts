@@ -22,7 +22,6 @@ export const app = fastify()
 // app.register(fastifyCookie)
 
 app.register(usersRoutes)
-// app.register(petsRoutes)
 
 app.setErrorHandler((error, _, reply) => {
   if (error instanceof ZodError) {

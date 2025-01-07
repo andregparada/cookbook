@@ -53,8 +53,33 @@ describe('Create Dish Use Case', () => {
       ],
       tags: [{ title: 'Tag title' }],
     })
-    console.log(dish)
 
     expect(dish.id).toEqual(expect.any(String))
+  })
+
+  it('should be able to create ingredient upon dish creation', async () => {
+    const user = await usersRepository.create({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
+
+    await sut.execute({
+      name: 'Dish name',
+      instructions: 'Dish instructions',
+      description: 'Dish description',
+      userId: user.id,
+      ingredients: [
+        { name: 'Dish ingredient 1', quantity: 1 },
+        { name: 'Dish ingredient 2', quantity: 1 },
+      ],
+      tags: [{ title: 'Tag title' }],
+    })
+
+    const ingredient =
+      await ingredientsRepository.findByName('Dish ingredient 1')
+
+    expect(ingredient?.name).toEqual('Dish ingredient 1')
   })
 })
