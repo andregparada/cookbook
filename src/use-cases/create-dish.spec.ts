@@ -82,4 +82,40 @@ describe('Create Dish Use Case', () => {
 
     expect(ingredient?.name).toEqual('Dish ingredient 1')
   })
+
+  it('should not be able to create ingredient, if it already exists', async () => {
+    const user = await usersRepository.create({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
+
+    await sut.execute({
+      name: 'Dish name',
+      instructions: 'Dish instructions',
+      description: 'Dish description',
+      userId: user.id,
+      ingredients: [
+        { name: 'Dish ingredient 1', quantity: 1 },
+        { name: 'Dish ingredient 2', quantity: 1 },
+      ],
+      tags: [{ title: 'Tag title' }],
+    })
+
+    expect(
+      await ingredientsRepository.create({
+        id: 'ingredient-id',
+        name: 'Dish ingredient 1',
+      }),
+    ).toBe(null)
+  })
+
+  it('should be able to create tag, upon dish creation')
+
+  it('should not be able to create tag, if it already exists')
+
+  it(
+    'should be able to create table of ingredients on dishes, connecting ingredients with dish ',
+  )
 })

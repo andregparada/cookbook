@@ -6,6 +6,8 @@ export class InMemoryIngredientsRepository implements IngredientsRepository {
   public items: Ingredient[] = []
 
   async create(data: Prisma.IngredientCreateInput) {
+    if (await this.findByName(data.name)) return null
+
     const ingredient = {
       id: randomUUID(),
       name: data.name,
