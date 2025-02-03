@@ -111,11 +111,77 @@ describe('Create Dish Use Case', () => {
     ).toBe(null)
   })
 
-  it('should be able to create tag, upon dish creation')
+  it('should be able to create tag, upon dish creation', async () => {
+    const user = await usersRepository.create({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
 
-  it('should not be able to create tag, if it already exists')
+    await sut.execute({
+      name: 'Dish name',
+      instructions: 'Dish instructions',
+      description: 'Dish description',
+      userId: user.id,
+      ingredients: [
+        { name: 'Dish ingredient 1', quantity: 1 },
+        { name: 'Dish ingredient 2', quantity: 1 },
+      ],
+      tags: [{ title: 'Tag title' }],
+    })
 
-  it(
-    'should be able to create table of ingredients on dishes, connecting ingredients with dish ',
-  )
+    const tag = await tagsRepository.findByTitle('Tag title')
+
+    expect(tag?.title).toEqual('Tag title')
+  })
+
+  it('should not be able to create tag, if it already exists', async () => {
+    const user = await usersRepository.create({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
+
+    await sut.execute({
+      name: 'Dish name',
+      instructions: 'Dish instructions',
+      description: 'Dish description',
+      userId: user.id,
+      ingredients: [
+        { name: 'Dish ingredient 1', quantity: 1 },
+        { name: 'Dish ingredient 2', quantity: 1 },
+      ],
+      tags: [{ title: 'Tag title' }],
+    })
+
+    expect(
+      await tagsRepository.create({
+        id: 'tag-id',
+        title: 'Tag title',
+      }),
+    ).toBe(null)
+  })
+
+  it('should be able to create table of ingredients on dishes, connecting ingredients with dish ', async () => {
+    const user = await usersRepository.create({
+      id: 'user-id',
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+      password_hash: await hash('123456', 6),
+    })
+
+    await sut.execute({
+      name: 'Dish name',
+      instructions: 'Dish instructions',
+      description: 'Dish description',
+      userId: user.id,
+      ingredients: [
+        { name: 'Dish ingredient 1', quantity: 1 },
+        { name: 'Dish ingredient 2', quantity: 1 },
+      ],
+      tags: [{ title: 'Tag title' }],
+    })
+  })
 })

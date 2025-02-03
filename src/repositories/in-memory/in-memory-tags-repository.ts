@@ -7,6 +7,8 @@ export class InMemoryTagsRepository implements TagsRepository {
   public tagConnections: { tagId: string; dishId: string }[] = []
 
   async create(data: Prisma.TagUncheckedCreateInput) {
+    if (await this.findByTitle(data.title)) return null
+
     const tag = {
       id: randomUUID(),
       title: data.title,

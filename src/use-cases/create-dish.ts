@@ -74,6 +74,10 @@ export class CreateDishUseCase {
           ingredient = await this.ingredientsRepository.create({ name })
         }
 
+        if (!ingredient || ingredient == null) {
+          throw ResourceNotFoundError
+        }
+
         await this.ingredientsOnDishesRepository.create({
           dish_id: dish.id,
           ingredient_id: ingredient.id,
@@ -82,17 +86,23 @@ export class CreateDishUseCase {
       }),
     )
 
-    tags.map(async (tag) => {
-      let tagId = await this.tagsRepository.findByTitle(tag.title)
+    await Promise.all(
+      tags.map(async (tag) => {
+        let tagId = await this.tagsRepository.findByTitle(tag.title)
 
-      if (!tagId) {
-        tagId = await this.tagsRepository.create({
-          title: tag.title,
-        })
+        if (!tagId) {
+          tagId = await this.tagsRepository.create({
+            title: tag.title,
+          })
 
-        await this.tagsRepository.connect(tagId.id, dish.id)
-      }
-    })
+          if (!tagId || tag == null) {
+            throw ResourceNotFoundError
+          }
+
+          await this.tagsRepository.connect(tagId.id, dish.id)
+        }
+      }),
+    )
 
     return { dish }
   }
