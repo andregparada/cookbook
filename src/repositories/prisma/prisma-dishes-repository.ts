@@ -4,10 +4,10 @@ import { prisma } from '@/lib/prisma'
 
 export class PrismaDishesRepository implements DishesRepository {
   async create(data: Prisma.DishUncheckedCreateInput) {
-    const user = await prisma.dish.create({
+    const dish = await prisma.dish.create({
       data,
     })
 
-    return user
+    return dish
   }
 }
