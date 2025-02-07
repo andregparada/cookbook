@@ -19,4 +19,11 @@ export class InMemoryIngredientsOnDishesRepository
 
     return ingredientOnDish
   }
+
+  async findByDishId(dishId: string) {
+    const ingredientsOnDish = this.items.filter(
+      (item) => item.dish_id === dishId,
+    )
+    return ingredientsOnDish
+  }
 }

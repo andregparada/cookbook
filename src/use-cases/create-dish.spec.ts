@@ -172,7 +172,7 @@ describe('Create Dish Use Case', () => {
       password_hash: await hash('123456', 6),
     })
 
-    await sut.execute({
+    const { dish } = await sut.execute({
       name: 'Dish name',
       instructions: 'Dish instructions',
       description: 'Dish description',
@@ -183,5 +183,12 @@ describe('Create Dish Use Case', () => {
       ],
       tags: [{ title: 'Tag title' }],
     })
+
+    const ingredientsOnDish = await ingredientsOnDishesRepository.findByDishId(
+      dish.id,
+    )
+
+    expect(ingredientsOnDish).not.toBeNull()
+    expect(ingredientsOnDish![0].id).toEqual(expect.any(String))
   })
 })
