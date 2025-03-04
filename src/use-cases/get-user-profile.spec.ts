@@ -2,7 +2,7 @@ import { expect, describe, it, beforeEach } from 'vitest'
 import { GetUserProfileUseCase } from './get-user-profile'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { randomUserData } from '@/utils/test/factories/user'
+import { createUserData } from '@/utils/test/factories/user'
 
 let usersRepository: InMemoryUsersRepository
 let sut: GetUserProfileUseCase
@@ -14,7 +14,7 @@ describe('Get User Profile Use Case', () => {
   })
 
   it('should be able to get user profile', async () => {
-    const userData = randomUserData()
+    const userData = createUserData()
 
     const createdUser = await usersRepository.create(userData)
 
@@ -23,7 +23,7 @@ describe('Get User Profile Use Case', () => {
     })
 
     expect(user.id).toEqual(expect.any(String))
-    expect(user.name).toEqual(userData.name)
+    expect(user.userName).toEqual(userData.userName)
   })
 
   it('should not be able to get user profile with wrong id', async () => {
