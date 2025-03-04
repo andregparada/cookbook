@@ -1,6 +1,4 @@
 import { expect, describe, it, beforeEach } from 'vitest'
-import { hash } from 'bcryptjs'
-// import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { CreateDishUseCase } from './create-dish'
 import { InMemoryDishesRepository } from '@/repositories/in-memory/in-memory-dishes-repository'
@@ -10,6 +8,8 @@ import { TagsRepository } from '@/repositories/tags-repository'
 import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-dishes-repository'
 import { InMemoryIngredientsOnDishesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-dishes-repository'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository'
+import { randomUserData } from '@/utils/test/factories/user'
+import { CreateRandomData, RandomDish } from '@/utils/test/factories/dish'
 
 let usersRepository: InMemoryUsersRepository
 let dishesRepository: InMemoryDishesRepository
@@ -34,36 +34,28 @@ describe('Create Dish Use Case', () => {
     )
   })
 
-  it('should be able to create dish', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+  it.only('should be able to create dish', async () => {
+    // const createRandomData = new CreateRandomData()
+    // const userData = randomUserData()
+    const randomDish = new RandomDish()
+
+    const user = await usersRepository.create(randomDish.user!)
+    console.log(user)
 
     const { dish } = await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
+      ...randomDish.dish,
+      user_id: user.id,
+      ingredients: [{ name: 'name', quantity: 1 }],
+      tags: [{ title: 'title' }],
     })
 
     expect(dish.id).toEqual(expect.any(String))
   })
 
   it('should be able to create ingredient upon dish creation', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     await sut.execute({
       name: 'Dish name',
@@ -84,12 +76,9 @@ describe('Create Dish Use Case', () => {
   })
 
   it('should not be able to create ingredient, if it already exists', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     await sut.execute({
       name: 'Dish name',
@@ -112,12 +101,9 @@ describe('Create Dish Use Case', () => {
   })
 
   it('should be able to create tag, upon dish creation', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     await sut.execute({
       name: 'Dish name',
@@ -137,12 +123,9 @@ describe('Create Dish Use Case', () => {
   })
 
   it('should not be able to create tag, if it already exists', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     await sut.execute({
       name: 'Dish name',
@@ -165,12 +148,9 @@ describe('Create Dish Use Case', () => {
   })
 
   it('should be able to create table of ingredients on dishes, connecting ingredients with dish ', async () => {
-    const user = await usersRepository.create({
-      id: 'user-id',
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     const { dish } = await sut.execute({
       name: 'Dish name',

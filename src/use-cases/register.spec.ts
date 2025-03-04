@@ -3,7 +3,7 @@ import { RegisterUseCase } from './register'
 import { compare } from 'bcryptjs'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { registerRandomUser } from '@/utils/test/factories/register-user'
+import { createUserData } from '@/utils/test/factories/user'
 
 let usersRepository: InMemoryUsersRepository
 let sut: RegisterUseCase
@@ -15,32 +15,43 @@ describe('Register Use Case', () => {
   })
 
   it('should be able to register', async () => {
-    const userData = registerRandomUser()
+    const userData = createUserData()
 
-    const { user } = await sut.execute(userData)
+    const { user } = await sut.execute({
+      ...userData,
+      password: '1233456',
+    })
 
     expect(user.id).toEqual(expect.any(String))
+    expect(user.userName).toEqual(userData.userName)
   })
 
   it('should hash user password upon registration', async () => {
-    const userData = registerRandomUser()
+    const userData = createUserData()
 
-    const { user } = await sut.execute(userData)
+    const password = '123456'
 
-    const isPasswordCorrectlyHashed = await compare(
-      userData.password,
-      user.password_hash,
-    )
+    const { user } = await sut.execute({
+      ...userData,
+      password,
+    })
+
+    const isPasswordCorrectlyHashed = await compare(password, user.passwordHash)
 
     expect(isPasswordCorrectlyHashed).toBe(true)
   })
 
   it('should not be able to register with same email twice', async () => {
-    const userData = registerRandomUser()
+    const userData = createUserData()
 
-    await sut.execute(userData)
+    const registerData = {
+      ...userData,
+      password: '1233456',
+    }
 
-    await expect(() => sut.execute(userData)).rejects.toBeInstanceOf(
+    await sut.execute(registerData)
+
+    await expect(() => sut.execute(registerData)).rejects.toBeInstanceOf(
       UserAlreadyExistsError,
     )
   })

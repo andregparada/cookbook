@@ -1,8 +1,17 @@
 - [] Deve ser possível criar um usuário
 - [] O usuário deve ter:
-  - [] Nome
+  - [] Primeiro Nome
+  - [] Sobrenome
+  - [] Nome de usuário
   - [] Email
   - [] Senha
+  - [] Tipo de usuário
+  - [] Uma lista de receitas
+  - [] Uma lista de comentários em receitas
+  - [] Uma lista de avaliações de receitas
+  - [] Uma lista receitas favoritas
+  - [] Uma lista de pastas com categorizadas receitas para fazer
+  - [] Uma possibilidade de categorizar uma receita como já feita e não feita
 - [] Deve ser possível autenticar o usuário
 - [] Deve ser possível atualizar dados do usuário autenticado
 - [] Deve ser possível deletar usuário autenticado
@@ -12,11 +21,22 @@
   - [] Descrição Opcional
   - [] Ingredientes
   - [] Modo de preparo
-  - [] Duração de preparo Opcional
-  - [] Dificuldade de preparo Opcional
+  - [] Tempo de preparo Opcional
+  - [] Tempo de cocção Opcional
+  - [] Duração total Opcional
+  - [] Quantidade de porções
+  - [] Dificuldade Opcional
   - [] Preço médio do prato Opcional
+  - [] Uma lista de Tags Opcional
+  - [] Uma lista de categorias
+  - [] Uma lista de *peculiaridades como se leva peanela de pressão, //to esquecendo como chamar isso
+  - [] // alguma coisa com restrição alimentar
 - [] Deve ser possível atualizar um prato de usuário autenticado
 - [] Deve ser possível listar pratos por usuário
 - [] Deve ser possível pesquisar prato pelo título
 - [] Deve ser possível listar pratos com determinado ingrediente ou conjunto de ingredientes
-- [] Deve ser possível listar pratos possíveis com um conjuntos específico de ingredientes
+- [] Deve ser possível listar pratos com apenas ingrediente ou conjunto de ingredientes listados
+- [] Deve ser possível listar pratos com ingrediente ou conjunto de ingredientes listados, podendo faltar pelo menos uma quantidade limite de outros ingredientes
+- [] Deve ser possível avaliar a receita
+- [] Deve ser possível comentar a receita
+- [] Deve ser possível adaptar a receita, mudando a quantidade de porções desejada

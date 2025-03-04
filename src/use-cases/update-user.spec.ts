@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it } from 'vitest'
-import { hash } from 'bcryptjs'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { UpdateUserUseCase } from './update-user'
 import { UserAlreadyExistsError } from './errors/user-already-exists-error'
+import { randomUserData } from '@/utils/test/factories/user'
+import { RandomDish } from '@/utils/test/factories/dish'
 
 let usersRepository: InMemoryUsersRepository
 let sut: UpdateUserUseCase
@@ -14,11 +15,9 @@ describe('Update User Use Case', () => {
   })
 
   it('should be able to update an user', async () => {
-    const user = await usersRepository.create({
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    const userData = randomUserData()
+
+    const user = await usersRepository.create(userData)
 
     const { updatedUser } = await sut.execute({
       userId: user.id,
@@ -29,31 +28,28 @@ describe('Update User Use Case', () => {
     expect(updatedUser).toEqual(
       expect.objectContaining({
         name: 'Jane Doe',
-        email: 'johndoe@example.com',
+        email: userData.email,
       }),
     )
   })
 
   it('should not be able to update email to a existing one', async () => {
-    const email = 'johndoe@example.com'
+    const firstUserData = randomUserData()
+    const secondUserData = randomUserData()
 
-    await usersRepository.create({
-      name: 'John Doe',
-      email,
-      password_hash: await hash('123456', 6),
-    })
-
-    const user = await usersRepository.create({
-      name: 'Jane Doe',
-      email: 'janedoe@example.com',
-      password_hash: await hash('123456', 6),
-    })
+    await usersRepository.create(firstUserData)
+    const secondUser = await usersRepository.create(secondUserData)
 
     await expect(() =>
       sut.execute({
-        userId: user.id,
-        email,
+        userId: secondUser.id,
+        email: firstUserData.email,
       }),
     ).rejects.toBeInstanceOf(UserAlreadyExistsError)
+  })
+
+  it('should use factory', async () => {
+    const randomDish = new RandomDish(undefined)
+    console.log(randomDish)
   })
 })

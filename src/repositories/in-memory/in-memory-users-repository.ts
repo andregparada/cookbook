@@ -9,11 +9,16 @@ export class InMemoryUsersRepository implements UsersRepository {
   async create(data: Prisma.UserCreateInput) {
     const user = {
       id: randomUUID(),
-      name: data.name,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      userName: data.userName,
       email: data.email,
-      password_hash: data.password_hash,
+      passwordHash: data.passwordHash,
       role: data.role ?? 'MEMBER',
-      created_at: new Date(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+      isActive: true,
     }
 
     this.items.push(user)
@@ -31,14 +36,22 @@ export class InMemoryUsersRepository implements UsersRepository {
 
     const updatedUser = {
       id: user.id,
-      name: typeof data.name === 'string' ? data.name : user?.name,
+      firstName:
+        typeof data.firstName === 'string' ? data.firstName : user?.firstName,
+      lastName:
+        typeof data.lastName === 'string' ? data.lastName : user?.lastName,
+      userName:
+        typeof data.userName === 'string' ? data.userName : user?.userName,
       email: typeof data.email === 'string' ? data.email : user?.email,
-      password_hash:
-        typeof data.password_hash === 'string'
-          ? data.password_hash
-          : user?.password_hash,
+      passwordHash:
+        typeof data.passwordHash === 'string'
+          ? data.passwordHash
+          : user?.passwordHash,
       role: user.role,
-      created_at: user.created_at,
+      createdAt: user.createdAt,
+      updatedAt: new Date(),
+      deletedAt: null,
+      isActive: true,
     }
 
     this.items[userIndex] = updatedUser
@@ -52,6 +65,16 @@ export class InMemoryUsersRepository implements UsersRepository {
 
   async findByEmail(email: string) {
     const user = this.items.find((item) => item.email === email)
+
+    if (!user) {
+      return null
+    }
+
+    return user
+  }
+
+  async findByUserName(userName: string) {
+    const user = this.items.find((item) => item.userName === userName)
 
     if (!user) {
       return null

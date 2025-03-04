@@ -5,5 +5,6 @@ export interface UsersRepository {
   update(data: Prisma.UserUpdateInput): Promise<User>
   delete(id: string): void
   findByEmail(email: string): Promise<User | null>
+  findByUserName(userName: string): Promise<User | null>
   findById(id: string): Promise<User | null>
 }

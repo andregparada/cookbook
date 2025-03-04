@@ -9,15 +9,15 @@ import { TagsRepository } from '@/repositories/tags-repository'
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
 
 interface CreateDishUseCaseRequest {
-  userId: string
+  user_id: string
   name: string
   description: string
   instructions: string
-  duration?: number
-  difficulty?: Difficulty
-  cost?: number
-  prepTime?: number
-  cookTime?: number
+  duration: number | null
+  difficulty: Difficulty | null
+  cost: number | null
+  prepTime: number | null
+  cookTime: number | null
   ingredients: { name: string; quantity: number }[]
   tags: { title: string }[]
 }
@@ -36,7 +36,7 @@ export class CreateDishUseCase {
   ) {}
 
   async execute({
-    userId,
+    user_id,
     name,
     description,
     instructions,
@@ -48,7 +48,7 @@ export class CreateDishUseCase {
     ingredients,
     tags,
   }: CreateDishUseCaseRequest): Promise<CreateDishUseCaseResponse> {
-    const user = await this.usersRepository.findById(userId)
+    const user = await this.usersRepository.findById(user_id)
 
     if (!user) {
       throw new ResourceNotFoundError()
@@ -63,7 +63,7 @@ export class CreateDishUseCase {
       cost,
       prep_time: prepTime,
       cook_time: cookTime,
-      user_id: userId,
+      user_id,
     })
 
     await Promise.all(

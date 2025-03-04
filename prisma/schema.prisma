@@ -12,53 +12,61 @@ enum Role {
   MEMBER
 }
 
-enum Difficulty {
+enum RecipeDifficulty {
   EASY
   MEDIUM
   HARD
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  password_hash String
-  role          Role     @default(MEMBER)
-  created_at    DateTime @default(now())
+  id           String    @id @default(uuid())
+  firstName    String    @db.VarChar(50)
+  lastName     String    @db.VarChar(50)
+  userName     String    @unique @db.VarChar(50)
+  email        String    @unique @db.VarChar(100)
+  passwordHash String    @db.VarChar(255)
+  role         Role      @default(MEMBER)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+  isActive     Boolean   @default(true)
 
-  dishes Dish[]
+  recipes Recipe[]
 
+  @@index([email])
+  @@index([userName])
   @@map("users")
 }
 
-model Dish {
-  id           String      @id @default(uuid())
-  name         String      @unique
-  description  String
-  instructions String
-  duration     Int?
-  // tipo de duração
-  difficulty   Difficulty?
-  cost         Float?
-  prep_time    Int?
-  cook_time    Int?
+model Recipe {
+  id           String            @id @default(uuid())
+  title        String            @db.VarChar(100)
+  description  String            @db.VarChar(500)
+  instructions String            @db.Text
+  prepTime     Int?
+  cookTime     Int?
+  difficulty   RecipeDifficulty?
+  cost         Decimal?
+  servings     Int?
 
-  ingredients IngredientsOnDishes[]
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  ingredients IngredientOnRecipe[]
   tags        Tag[]
 
-  user    User?   @relation(fields: [user_id], references: [id])
-  user_id String?
-
-  @@map("dishes")
+  @@index([title])
+  @@index([userId])
+  @@map("recipes")
 }
 
 model Ingredient {
-  id   String @id @default(uuid())
-  name String @unique
-  cost Float?
+  id                 String               @id @default(uuid())
+  name               String               @unique @db.VarChar(100)
+  cost               Decimal?
+  IngredientOnRecipe IngredientOnRecipe[]
 
-  dishes IngredientsOnDishes[]
-
+  @@index([name])
   @@map("ingredients")
 }
 
@@ -66,19 +74,22 @@ model Tag {
   id    String @id @default(uuid())
   title String @unique
 
-  dishes Dish[]
+  Recipe   Recipe? @relation(fields: [recipeId], references: [id])
+  recipeId String?
 
+  @@index([title])
   @@map("tags")
 }
 
-model IngredientsOnDishes {
+model IngredientOnRecipe {
   id       String @id @default(uuid())
   quantity Float
+  unit     String
 
-  dish          Dish?       @relation(fields: [dish_id], references: [id])
-  dish_id       String?
-  ingredient    Ingredient? @relation(fields: [ingredient_id], references: [id])
-  ingredient_id String?
+  recipe       Recipe     @relation(fields: [recipeId], references: [id])
+  recipeId     String
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id])
+  ingredientId String
 
-  @@map("ingredients_on_dish")
+  @@map("ingredientsOnRecipes")
 }
