@@ -41,7 +41,7 @@ describe('Register Use Case', () => {
     expect(isPasswordCorrectlyHashed).toBe(true)
   })
 
-  it('should not be able to register with same email twice', async () => {
+  it('should not be able to register with same email and username twice', async () => {
     const userData = createUserData()
 
     const registerData = {

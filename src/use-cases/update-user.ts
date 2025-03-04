@@ -6,7 +6,9 @@ import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 
 interface UpdateUserUseCaseRequest {
   userId: string
-  name?: string
+  firstName?: string
+  lastName?: string
+  userName?: string
   email?: string
   password?: string
 }
@@ -20,7 +22,9 @@ export class UpdateUserUseCase {
 
   async execute({
     userId,
-    name,
+    firstName,
+    lastName,
+    userName,
     email,
     password,
   }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
@@ -30,9 +34,7 @@ export class UpdateUserUseCase {
       throw new ResourceNotFoundError()
     }
 
-    const password_hash = password
-      ? await hash(password, 6)
-      : user.password_hash
+    const passwordHash = password ? await hash(password, 6) : user.passwordHash
 
     if (email) {
       const userWithSameEmail = await this.UsersRepository.findByEmail(email)
@@ -42,11 +44,25 @@ export class UpdateUserUseCase {
       }
     }
 
+    if (userName) {
+      const userWithSameUserName =
+        await this.UsersRepository.findByUserName(userName)
+
+      if (
+        userWithSameUserName &&
+        userWithSameUserName.userName !== user.userName
+      ) {
+        throw new UserAlreadyExistsError()
+      }
+    }
+
     const updatedUser = await this.UsersRepository.update({
       id: userId,
-      name: name || user.name,
+      firstName: firstName || user.firstName,
+      lastName: lastName || user.lastName,
+      userName: userName || user.userName,
       email: email || user.email,
-      password_hash: password_hash || user.password_hash,
+      passwordHash: passwordHash || user.passwordHash,
     })
 
     return {
