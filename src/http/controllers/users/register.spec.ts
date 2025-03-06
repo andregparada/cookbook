@@ -1,6 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import { createUserData } from '@/utils/test/factories/user-data'
 
 describe('Register (e2e)', () => {
   beforeAll(async () => {
@@ -12,11 +13,14 @@ describe('Register (e2e)', () => {
   })
 
   it('should be able to register', async () => {
-    const response = await request(app.server).post('/users').send({
-      name: 'John Doe',
-      email: 'johndoe@example.com',
-      password: '123456',
-    })
+    const userData = createUserData()
+
+    const response = await request(app.server)
+      .post('/users')
+      .send({
+        ...userData,
+        password: '123456',
+      })
 
     expect(response.statusCode).toEqual(201)
   })
