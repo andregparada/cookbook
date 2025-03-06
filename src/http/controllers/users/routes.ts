@@ -11,6 +11,6 @@ export async function usersRoutes(app: FastifyInstance) {
   app.post('/sessions', authenticate)
 
   app.get('/me', { onRequest: [verifyJWT] }, profile)
-  app.put('/users', { onRequest: [verifyJWT] }, update)
-  app.delete('/users', { onRequest: [verifyJWT] }, deleteUser)
+  app.put('/me', { onRequest: [verifyJWT] }, update)
+  app.delete('/me', { onRequest: [verifyJWT] }, deleteUser)
 }

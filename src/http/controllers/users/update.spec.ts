@@ -2,8 +2,9 @@ import request from 'supertest'
 import { app } from '@/app'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
+import { faker } from '@faker-js/faker'
 
-describe('Get User Profile (e2e)', () => {
+describe('Update User (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -12,19 +13,17 @@ describe('Get User Profile (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to get user profile', async () => {
+  it('should be able to update user profile', async () => {
     const { token, user } = await createAndAuthenticateUser(app)
 
-    const profileResponse = await request(app.server)
-      .get('/me')
+    const response = await request(app.server)
+      .put('/me')
       .set('Authorization', `Bearer ${token}`)
-      .send()
+      .send({
+        userId: user.id,
+        firstName: faker.person.firstName(),
+      })
 
-    expect(profileResponse.statusCode).toEqual(200)
-    expect(profileResponse.body.user).toEqual(
-      expect.objectContaining({
-        email: user.email,
-      }),
-    )
+    expect(response.statusCode).toEqual(200)
   })
 })

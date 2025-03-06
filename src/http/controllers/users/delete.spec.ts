@@ -3,7 +3,7 @@ import { app } from '@/app'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
 import { createAndAuthenticateUser } from '@/utils/test/create-and-authenticate-user'
 
-describe('Get User Profile (e2e)', () => {
+describe('Delete User (e2e)', () => {
   beforeAll(async () => {
     await app.ready()
   })
@@ -12,19 +12,19 @@ describe('Get User Profile (e2e)', () => {
     await app.close()
   })
 
-  it('should be able to get user profile', async () => {
+  it('should be able to delete user profile', async () => {
     const { token, user } = await createAndAuthenticateUser(app)
 
-    const profileResponse = await request(app.server)
-      .get('/me')
+    const response = await request(app.server)
+      .delete('/me')
       .set('Authorization', `Bearer ${token}`)
-      .send()
+      .send({
+        userId: user.id,
+      })
 
-    expect(profileResponse.statusCode).toEqual(200)
-    expect(profileResponse.body.user).toEqual(
-      expect.objectContaining({
-        email: user.email,
-      }),
-    )
+    console.log('Response status:', response.statusCode)
+    console.log('Response body:', response.body)
+
+    expect(response.statusCode).toEqual(204)
   })
 })

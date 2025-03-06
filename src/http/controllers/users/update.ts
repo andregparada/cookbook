@@ -13,9 +13,9 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
   })
 
   const updateBodySchema = z.object({
-    firstName: z.string(),
-    lastName: z.string(),
-    userName: z.string(),
+    firstName: z.string().optional(),
+    lastName: z.string().optional(),
+    userName: z.string().optional(),
     email: z.string().email().optional(),
     password: z.string().min(6).optional(),
   })
@@ -42,5 +42,5 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
     throw err
   }
 
-  return reply.status(201).send()
+  return reply.status(200).send()
 }

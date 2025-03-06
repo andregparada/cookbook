@@ -27,6 +27,6 @@ export async function createAndAuthenticateUser(
 
   return {
     token,
-    email: userData.email,
+    user: userData,
   }
 }
