@@ -1,5 +1,5 @@
 import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository'
-import { CreateDishUseCase } from '../create-dish'
+import { CreateDishUseCase } from '../create-recipe'
 import { PrismaDishesRepository } from '@/repositories/prisma/prisma-dishes-repository'
 import { PrismaIngredientsRepository } from '@/repositories/prisma/prisma-ingredients-repository'
 import { PrismaTagsRepository } from '@/repositories/prisma/prisma-tags-repository'

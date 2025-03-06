@@ -1,4 +1,3 @@
-import { Dish } from '@prisma/client'
 import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { UsersRepository } from '@/repositories/users-repository'
 import { DishesRepository } from '@/repositories/dishes-repository'
@@ -8,9 +7,9 @@ import { TagsRepository } from '@/repositories/tags-repository'
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
 
-interface CreateDishUseCaseRequest {
-  user_id: string
-  name: string
+interface CreateRecipeUseCaseRequest {
+  userId: string
+  title: string
   description: string
   instructions: string
   duration: number | null
@@ -22,11 +21,11 @@ interface CreateDishUseCaseRequest {
   tags: { title: string }[]
 }
 
-interface CreateDishUseCaseResponse {
+interface CreateRecipeUseCaseResponse {
   dish: Dish
 }
 
-export class CreateDishUseCase {
+export class CreateRecipeUseCase {
   constructor(
     private usersRepository: UsersRepository,
     private dishesRepository: DishesRepository,
@@ -47,7 +46,7 @@ export class CreateDishUseCase {
     cookTime,
     ingredients,
     tags,
-  }: CreateDishUseCaseRequest): Promise<CreateDishUseCaseResponse> {
+  }: CreateRecipeUseCaseRequest): Promise<CreateRecipeUseCaseResponse> {
     const user = await this.usersRepository.findById(user_id)
 
     if (!user) {

@@ -13,17 +13,27 @@ export async function update(request: FastifyRequest, reply: FastifyReply) {
   })
 
   const updateBodySchema = z.object({
-    name: z.string().optional(),
+    firstName: z.string(),
+    lastName: z.string(),
+    userName: z.string(),
     email: z.string().email().optional(),
     password: z.string().min(6).optional(),
   })
 
-  const { name, email, password } = updateBodySchema.parse(request.body)
+  const { firstName, lastName, userName, email, password } =
+    updateBodySchema.parse(request.body)
 
   try {
     const updateUseCase = makeUpdateUserUseCase()
 
-    await updateUseCase.execute({ userId: user.id, name, email, password })
+    await updateUseCase.execute({
+      userId: user.id,
+      firstName,
+      lastName,
+      userName,
+      email,
+      password,
+    })
   } catch (err) {
     if (err instanceof UserAlreadyExistsError) {
       return reply.status(409).send({ message: err.message })

@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { CreateDishUseCase } from './create-dish'
+import { CreateDishUseCase } from './create-recipe'
 import { InMemoryDishesRepository } from '@/repositories/in-memory/in-memory-dishes-repository'
 import { InMemoryIngredientsRepository } from '@/repositories/in-memory/in-memory-ingredients-repository'
 import { IngredientsRepository } from '@/repositories/ingredients-repository'
@@ -8,7 +8,7 @@ import { TagsRepository } from '@/repositories/tags-repository'
 import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-dishes-repository'
 import { InMemoryIngredientsOnDishesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-dishes-repository'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository'
-import { randomUserData } from '@/utils/test/factories/user'
+import { randomUserData } from '@/utils/test/factories/user-data'
 import { CreateRandomData, RandomDish } from '@/utils/test/factories/dish'
 
 let usersRepository: InMemoryUsersRepository

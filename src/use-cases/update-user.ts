@@ -18,7 +18,7 @@ interface UpdateUserUseCaseResponse {
 }
 
 export class UpdateUserUseCase {
-  constructor(private UsersRepository: UsersRepository) {}
+  constructor(private usersRepository: UsersRepository) {}
 
   async execute({
     userId,
@@ -28,7 +28,7 @@ export class UpdateUserUseCase {
     email,
     password,
   }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
-    const user = await this.UsersRepository.findById(userId)
+    const user = await this.usersRepository.findById(userId)
 
     if (!user) {
       throw new ResourceNotFoundError()
@@ -37,7 +37,7 @@ export class UpdateUserUseCase {
     const passwordHash = password ? await hash(password, 6) : user.passwordHash
 
     if (email) {
-      const userWithSameEmail = await this.UsersRepository.findByEmail(email)
+      const userWithSameEmail = await this.usersRepository.findByEmail(email)
 
       if (userWithSameEmail && userWithSameEmail.email !== user.email) {
         throw new UserAlreadyExistsError()
@@ -46,7 +46,7 @@ export class UpdateUserUseCase {
 
     if (userName) {
       const userWithSameUserName =
-        await this.UsersRepository.findByUserName(userName)
+        await this.usersRepository.findByUserName(userName)
 
       if (
         userWithSameUserName &&
@@ -56,7 +56,7 @@ export class UpdateUserUseCase {
       }
     }
 
-    const updatedUser = await this.UsersRepository.update({
+    const updatedUser = await this.usersRepository.update({
       id: userId,
       firstName: firstName || user.firstName,
       lastName: lastName || user.lastName,

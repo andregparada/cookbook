@@ -6,17 +6,26 @@ import { z } from 'zod'
 
 export async function register(request: FastifyRequest, reply: FastifyReply) {
   const registerBodySchema = z.object({
-    name: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
+    userName: z.string(),
     email: z.string().email(),
     password: z.string().min(6),
   })
 
-  const { name, email, password } = registerBodySchema.parse(request.body)
+  const { firstName, lastName, userName, email, password } =
+    registerBodySchema.parse(request.body)
 
   try {
     const registerUseCase = makeRegisterUseCase()
 
-    await registerUseCase.execute({ name, email, password })
+    await registerUseCase.execute({
+      firstName,
+      lastName,
+      userName,
+      email,
+      password,
+    })
   } catch (err) {
     if (err instanceof UserAlreadyExistsError) {
       return reply.status(409).send({ message: err.message })
