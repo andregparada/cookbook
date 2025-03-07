@@ -22,9 +22,6 @@ describe('Delete User (e2e)', () => {
         userId: user.id,
       })
 
-    console.log('Response status:', response.statusCode)
-    console.log('Response body:', response.body)
-
     expect(response.statusCode).toEqual(204)
   })
 })

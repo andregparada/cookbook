@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { UpdateUserUseCase } from './update-user'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error'
 import { createUserData } from '@/utils/test/factories/user-data'
+import { UpdateUserUseCase } from '@/use-cases/users/update'
+import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
 let usersRepository: InMemoryUsersRepository
 let sut: UpdateUserUseCase

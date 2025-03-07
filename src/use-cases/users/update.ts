@@ -1,8 +1,8 @@
 import { UsersRepository } from '@/repositories/users-repository'
 import { User } from '@prisma/client'
 import { hash } from 'bcryptjs'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
-import { UserAlreadyExistsError } from './errors/user-already-exists-error'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
+import { UserAlreadyExistsError } from '../errors/user-already-exists-error'
 
 interface UpdateUserUseCaseRequest {
   userId: string

@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { DeleteUserUseCase } from './delete-user'
 import { createUserData } from '@/utils/test/factories/user-data'
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
+import { DeleteUserUseCase } from '@/use-cases/users/delete'
+import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
 
 let usersRepository: InMemoryUsersRepository
 let sut: DeleteUserUseCase
