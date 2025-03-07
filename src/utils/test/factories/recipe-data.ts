@@ -1,37 +1,46 @@
-import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { faker } from '@faker-js/faker'
-import { Difficulty, Dish, User } from '@prisma/client'
+import { Prisma, Recipe, RecipeDifficulty, User } from '@prisma/client'
+import { Decimal } from '@prisma/client/runtime/library'
 
-export class RandomDish {
-  dish: Dish
+export class CreateRecipeData {
+  recipe: Recipe
 
   constructor(public user?: User) {
-    this.user = this.createRandomMemberUser()
-    this.dish = this.createRandomDish(this.user)
+    this.user = this.createMemberUserData()
+    this.recipe = this.createRecipeData(this.user)
   }
 
-  createRandomMemberUser(): User {
+  createMemberUserData(): User {
     return {
-      name: faker.person.fullName(),
+      id: faker.string.uuid(),
+      firstName: faker.person.firstName(),
+      lastName: faker.person.lastName(),
+      userName: faker.person.fullName(),
       email: faker.internet.email(),
-      password_hash: faker.internet.password(),
-      created_at: new Date(),
+      passwordHash: faker.internet.password(),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+      isActive: true,
       role: 'MEMBER',
     }
   }
 
-  createRandomDish(user: User): Dish {
+  createRecipeData(user: User): Prisma.RecipeUncheckedCreateInput {
     return {
       id: faker.string.uuid(),
-      name: faker.food.dish(),
+      title: faker.food.dish(),
       description: faker.food.description(),
       instructions: faker.food.description(),
-      user_id: user.id,
-      cook_time: faker.number.int({ min: 1, max: 4320 }) ?? undefined,
-      prep_time: faker.number.int({ min: 1, max: 4320 }),
-      cost: faker.number.float({ min: 1, max: 3000, fractionDigits: 2 }),
-      duration: faker.number.int({ min: 1, max: 4320 }),
-      difficulty: faker.helpers.enumValue(Difficulty),
+      cookTime: faker.number.int({ min: 1, max: 4320 }) ?? undefined,
+      prepTime: faker.number.int({ min: 1, max: 4320 }) ?? undefined,
+      difficulty: faker.helpers.enumValue(RecipeDifficulty) ?? undefined,
+      cost:
+        new Decimal(
+          faker.number.float({ min: 1, max: 3000, fractionDigits: 2 }),
+        ) ?? undefined,
+      servings: faker.number.int({ min: 1, max: 100 }) ?? undefined,
+      userId: user.id,
     }
   }
 }

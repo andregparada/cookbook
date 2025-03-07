@@ -11,6 +11,7 @@ export class InMemoryTagsRepository implements TagsRepository {
 
     const tag = {
       id: randomUUID(),
+      recipeId: data.recipeId ?? null,
       title: data.title,
     }
 

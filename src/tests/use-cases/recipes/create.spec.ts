@@ -1,35 +1,35 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { CreateDishUseCase } from './create-recipe'
-import { InMemoryDishesRepository } from '@/repositories/in-memory/in-memory-recipes-repository'
 import { InMemoryIngredientsRepository } from '@/repositories/in-memory/in-memory-ingredients-repository'
 import { IngredientsRepository } from '@/repositories/ingredients-repository'
 import { TagsRepository } from '@/repositories/tags-repository'
-import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-recipes-repository'
-import { InMemoryIngredientsOnDishesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-recipes-repository'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository'
-import { randomUserData } from '@/utils/test/factories/user-data'
-import { CreateRandomData, RandomDish } from '@/utils/test/factories/dish'
+import { InMemoryRecipesRepository } from '@/repositories/in-memory/in-memory-recipes-repository'
+import { CreateRecipeUseCase } from '@/use-cases/recipes/create'
+import { InMemoryIngredientsOnRecipesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-recipes-repository'
+import { createUserData } from '@/utils/test/factories/user-data'
+import { CreateRecipeData } from '@/utils/test/factories/recipe-data'
 
 let usersRepository: InMemoryUsersRepository
-let dishesRepository: InMemoryDishesRepository
+let recipesRepository: InMemoryRecipesRepository
 let ingredientsRepository: IngredientsRepository
-let ingredientsOnDishesRepository: IngredientsOnDishesRepository
+let ingredientsOnRecipesRepository: InMemoryIngredientsOnRecipesRepository
 let tagsRepository: TagsRepository
-let sut: CreateDishUseCase
+let sut: CreateRecipeUseCase
 
-describe('Create Dish Use Case', () => {
+describe('Create Recipe Use Case', () => {
   beforeEach(async () => {
     usersRepository = new InMemoryUsersRepository()
-    dishesRepository = new InMemoryDishesRepository()
+    recipesRepository = new InMemoryRecipesRepository()
     ingredientsRepository = new InMemoryIngredientsRepository()
-    ingredientsOnDishesRepository = new InMemoryIngredientsOnDishesRepository()
+    ingredientsOnRecipesRepository =
+      new InMemoryIngredientsOnRecipesRepository()
     tagsRepository = new InMemoryTagsRepository()
-    sut = new CreateDishUseCase(
+    sut = new CreateRecipeUseCase(
       usersRepository,
-      dishesRepository,
+      recipesRepository,
       ingredientsRepository,
-      ingredientsOnDishesRepository,
+      ingredientsOnRecipesRepository,
       tagsRepository,
     )
   })
@@ -50,6 +50,25 @@ describe('Create Dish Use Case', () => {
     })
 
     expect(dish.id).toEqual(expect.any(String))
+  })
+
+  it.only('should be able to create recipe', async () => {
+    // const createRandomData = new CreateRandomData()
+    const userData = createUserData()
+    const createRecipeData = new CreateRecipeData()
+
+    const user = await usersRepository.create(userData)
+
+    const recipeData = createRecipeData.createRecipeData(user)
+
+    const { recipe } = await sut.execute({
+      ...recipeData,
+      userId: user.id,
+      ingredients: [{ name: 'name', quantity: 1, unit: 'grams' }],
+      tags: [{ title: 'title' }],
+    })
+
+    expect(recipe.id).toEqual(expect.any(String))
   })
 
   it('should be able to create ingredient upon dish creation', async () => {

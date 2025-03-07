@@ -1,6 +1,7 @@
 import { Ingredient, Prisma } from '@prisma/client'
 import { IngredientsRepository } from '../ingredients-repository'
 import { randomUUID } from 'crypto'
+import { Decimal } from '@prisma/client/runtime/library'
 
 export class InMemoryIngredientsRepository implements IngredientsRepository {
   public items: Ingredient[] = []
@@ -11,7 +12,7 @@ export class InMemoryIngredientsRepository implements IngredientsRepository {
     const ingredient = {
       id: randomUUID(),
       name: data.name,
-      cost: data.cost ?? null,
+      cost: data.cost instanceof Decimal ? new Decimal(data.cost) : null,
     }
 
     this.items.push(ingredient)
