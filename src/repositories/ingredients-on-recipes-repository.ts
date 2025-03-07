@@ -4,5 +4,5 @@ export interface IngredientsOnRecipesRepository {
   create(
     data: Prisma.IngredientOnRecipeUncheckedCreateInput,
   ): Promise<IngredientOnRecipe>
-  findByDishId(recipeId: string): Promise<IngredientOnRecipe[] | null>
+  findByRecipeId(recipeId: string): Promise<IngredientOnRecipe[] | null>
 }
