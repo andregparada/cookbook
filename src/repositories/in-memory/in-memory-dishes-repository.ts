@@ -1,5 +1,5 @@
 import { Dish, Prisma } from '@prisma/client'
-import { DishesRepository } from '../dishes-repository'
+import { DishesRepository } from '../recipes-repository'
 import { randomUUID } from 'crypto'
 
 export class InMemoryDishesRepository implements DishesRepository {

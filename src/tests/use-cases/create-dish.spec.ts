@@ -5,7 +5,7 @@ import { InMemoryDishesRepository } from '@/repositories/in-memory/in-memory-dis
 import { InMemoryIngredientsRepository } from '@/repositories/in-memory/in-memory-ingredients-repository'
 import { IngredientsRepository } from '@/repositories/ingredients-repository'
 import { TagsRepository } from '@/repositories/tags-repository'
-import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-dishes-repository'
+import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-recipes-repository'
 import { InMemoryIngredientsOnDishesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-dishes-repository'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository'
 import { randomUserData } from '@/utils/test/factories/user-data'

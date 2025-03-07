@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client'
-import { DishesRepository } from '../dishes-repository'
+import { DishesRepository } from '../recipes-repository'
 import { prisma } from '@/lib/prisma'
 
 export class PrismaDishesRepository implements DishesRepository {

@@ -1,5 +1,5 @@
 import { IngredientsOnDishes, Prisma } from '@prisma/client'
-import { IngredientsOnDishesRepository } from '../ingredients-on-dishes-repository'
+import { IngredientsOnDishesRepository } from '../ingredients-on-recipes-repository'
 import { randomUUID } from 'crypto'
 
 export class InMemoryIngredientsOnDishesRepository

@@ -1,9 +1,10 @@
-import { ResourceNotFoundError } from './errors/resource-not-found-error'
 import { UsersRepository } from '@/repositories/users-repository'
-import { DishesRepository } from '@/repositories/dishes-repository'
+import { RecipesRepository } from '@/repositories/recipes-repository'
 import { IngredientsRepository } from '@/repositories/ingredients-repository'
-import { IngredientsOnDishesRepository } from '@/repositories/ingredients-on-dishes-repository'
+import { IngredientsOnRecipesRepository } from '@/repositories/ingredients-on-recipes-repository'
 import { TagsRepository } from '@/repositories/tags-repository'
+import { Recipe } from '@prisma/client'
+import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
 
@@ -12,61 +13,61 @@ interface CreateRecipeUseCaseRequest {
   title: string
   description: string
   instructions: string
-  duration: number | null
-  difficulty: Difficulty | null
-  cost: number | null
-  prepTime: number | null
-  cookTime: number | null
-  ingredients: { name: string; quantity: number }[]
+  prepTime?: number
+  cookTime?: number
+  difficulty?: Difficulty
+  cost?: number
+  servings?: number
+  ingredients: { name: string; unit: string; quantity: number }[]
   tags: { title: string }[]
 }
 
 interface CreateRecipeUseCaseResponse {
-  dish: Dish
+  recipe: Recipe
 }
 
 export class CreateRecipeUseCase {
   constructor(
     private usersRepository: UsersRepository,
-    private dishesRepository: DishesRepository,
+    private recipesRepository: RecipesRepository,
     private ingredientsRepository: IngredientsRepository,
-    private ingredientsOnDishesRepository: IngredientsOnDishesRepository,
+    private ingredientsOnRecipesRepository: IngredientsOnRecipesRepository,
     private tagsRepository: TagsRepository,
   ) {}
 
   async execute({
-    user_id,
-    name,
+    userId,
+    title,
     description,
     instructions,
-    duration,
-    difficulty,
-    cost,
     prepTime,
     cookTime,
+    difficulty,
+    cost,
+    servings,
     ingredients,
     tags,
   }: CreateRecipeUseCaseRequest): Promise<CreateRecipeUseCaseResponse> {
-    const user = await this.usersRepository.findById(user_id)
+    const user = await this.usersRepository.findById(userId)
 
     if (!user) {
       throw new ResourceNotFoundError()
     }
 
-    const dish = await this.dishesRepository.create({
-      name,
+    const recipe = await this.recipesRepository.create({
+      userId,
+      title,
       description,
       instructions,
-      duration,
-      difficulty,
-      cost,
-      prep_time: prepTime,
-      cook_time: cookTime,
-      user_id,
+      prepTime: prepTime ?? null,
+      cookTime: cookTime ?? null,
+      difficulty: difficulty ?? null,
+      cost: cost ?? null,
+      servings: servings ?? null,
     })
 
     await Promise.all(
-      ingredients.map(async ({ name, quantity }) => {
+      ingredients.map(async ({ name, quantity, unit }) => {
         let ingredient = await this.ingredientsRepository.findByName(name)
 
         if (!ingredient) {
@@ -77,10 +78,11 @@ export class CreateRecipeUseCase {
           throw ResourceNotFoundError
         }
 
-        await this.ingredientsOnDishesRepository.create({
-          dish_id: dish.id,
-          ingredient_id: ingredient.id,
+        await this.ingredientsOnRecipesRepository.create({
+          recipeId: recipe.id,
+          ingredientId: ingredient.id,
           quantity,
+          unit,
         })
       }),
     )
@@ -98,11 +100,11 @@ export class CreateRecipeUseCase {
             throw ResourceNotFoundError
           }
 
-          await this.tagsRepository.connect(tagId.id, dish.id)
+          await this.tagsRepository.connect(tagId.id, recipe.id)
         }
       }),
     )
 
-    return { dish }
+    return { recipe }
   }
 }
