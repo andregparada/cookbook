@@ -8,7 +8,7 @@ import { ResourceNotFoundError } from '../errors/resource-not-found-error'
 
 type Difficulty = 'EASY' | 'MEDIUM' | 'HARD'
 
-interface CreateRecipeUseCaseRequest {
+export interface CreateRecipeUseCaseRequest {
   userId: string
   title: string
   description: string

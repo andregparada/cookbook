@@ -1,17 +1,12 @@
-import { CreateRecipeUseCaseRequest } from '@/use-cases/recipes/create'
+import { UsersRepository } from '@/repositories/users-repository'
 import { faker } from '@faker-js/faker'
-import { RecipeDifficulty, User } from '@prisma/client'
+import { RecipeDifficulty } from '@prisma/client'
 
 export class CreateRecipeData {
-  recipe: CreateRecipeUseCaseRequest
+  constructor(private usersRepository: UsersRepository) {}
 
-  constructor(public user?: User) {
-    this.user = this.createMemberUserData()
-    this.recipe = this.createRecipeData(user ?? this.user)
-  }
-
-  createMemberUserData(): User {
-    return {
+  async execute() {
+    const user = await this.usersRepository.create({
       id: faker.string.uuid(),
       firstName: faker.person.firstName(),
       lastName: faker.person.lastName(),
@@ -23,10 +18,8 @@ export class CreateRecipeData {
       deletedAt: null,
       isActive: true,
       role: 'MEMBER',
-    }
-  }
+    })
 
-  createRecipeData(user: User): CreateRecipeUseCaseRequest {
     return {
       title: faker.food.dish(),
       description: faker.food.description(),

@@ -1,4 +1,4 @@
-import { expect, describe, it, beforeEach } from 'vitest'
+import { expectTypeOf, expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { InMemoryIngredientsRepository } from '@/repositories/in-memory/in-memory-ingredients-repository'
 import { IngredientsRepository } from '@/repositories/ingredients-repository'
@@ -8,7 +8,8 @@ import { InMemoryRecipesRepository } from '@/repositories/in-memory/in-memory-re
 import { CreateRecipeUseCase } from '@/use-cases/recipes/create'
 import { InMemoryIngredientsOnRecipesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-recipes-repository'
 import { createUserData } from '@/utils/test/factories/user-data'
-import { CreateRecipeData } from '@/utils/test/factories/recipe-data'
+import { CreateRecipeData } from '@/utils/test/factories/recipe-data copy'
+import { Decimal } from '@prisma/client/runtime/library'
 
 let usersRepository: InMemoryUsersRepository
 let recipesRepository: InMemoryRecipesRepository
@@ -34,45 +35,28 @@ describe('Create Recipe Use Case', () => {
     )
   })
 
-  it.only('should be able to create dish', async () => {
-    // const createRandomData = new CreateRandomData()
-    // const userData = randomUserData()
-    const randomDish = new RandomDish()
-
-    const user = await usersRepository.create(randomDish.user!)
-    console.log(user)
-
-    const { dish } = await sut.execute({
-      ...randomDish.dish,
-      user_id: user.id,
-      ingredients: [{ name: 'name', quantity: 1 }],
-      tags: [{ title: 'title' }],
-    })
-
-    expect(dish.id).toEqual(expect.any(String))
-  })
-
   it.only('should be able to create recipe', async () => {
-    // const createRandomData = new CreateRandomData()
-    const userData = createUserData()
-    const createRecipeData = new CreateRecipeData()
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
+    const { recipe } = await sut.execute(recipeData)
 
-    const recipeData = createRecipeData.createRecipeData(user)
-
-    const { recipe } = await sut.execute({
-      ...recipeData,
-      userId: user.id,
-      ingredients: [{ name: 'name', quantity: 1, unit: 'grams' }],
-      tags: [{ title: 'title' }],
+    expect(recipe).toMatchObject({
+      id: expect.any(String),
+      title: expect.any(String),
+      description: expect.any(String),
+      instructions: expect.any(String),
+      cookTime: expect.any(Number),
+      prepTime: expect.any(Number),
+      difficulty: expect.stringMatching(/EASY|MEDIUM|HARD/), // Se for um enum
+      servings: expect.any(Number),
+      userId: expect.any(String),
     })
-
-    expect(recipe.id).toEqual(expect.any(String))
+    expect(recipe.cost).toBeInstanceOf(Decimal)
   })
 
   it('should be able to create ingredient upon dish creation', async () => {
-    const userData = randomUserData()
+    const userData = createUserData()
 
     const user = await usersRepository.create(userData)
 

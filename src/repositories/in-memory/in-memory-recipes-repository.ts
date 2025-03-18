@@ -16,9 +16,11 @@ export class InMemoryRecipesRepository implements RecipesRepository {
       prepTime: data.prepTime ?? null,
       cookTime: data.cookTime ?? null,
       difficulty: data.difficulty ?? null,
-      cost: data.cost instanceof Decimal ? new Decimal(data.cost) : null,
+      cost:
+        data.cost !== undefined && data.cost !== null
+          ? new Decimal(data.cost.toString())
+          : null,
       servings: data.servings ?? null,
-      // user_id: typeof data.user === 'string' ? data.user : null,
     }
 
     this.items.push(recipe)
