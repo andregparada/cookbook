@@ -28,14 +28,17 @@ export class CreateRecipeData {
       prepTime: faker.number.int({ min: 1, max: 4320 }) ?? undefined,
       difficulty: faker.helpers.enumValue(RecipeDifficulty) ?? undefined,
       cost:
-        faker.number.float({ min: 1, max: 3000, fractionDigits: 2 }) ??
+        faker.number.float({ min: 1, max: 500, fractionDigits: 2 }) ??
         undefined,
-      servings: faker.number.int({ min: 1, max: 100 }) ?? undefined,
+      servings: faker.number.int({ min: 1, max: 20 }) ?? undefined,
       userId: user.id,
       ingredients: [
         {
           name: faker.food.ingredient(),
-          quantity: faker.number.int({ min: 1, max: 100 }),
+          cost:
+            faker.number.float({ min: 1, max: 100, fractionDigits: 2 }) ??
+            undefined,
+          quantity: faker.number.int({ min: 1, max: 20 }),
           unit: 'grams',
         },
       ],

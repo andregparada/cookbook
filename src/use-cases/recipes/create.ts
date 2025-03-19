@@ -18,7 +18,7 @@ export interface CreateRecipeUseCaseRequest {
   difficulty?: Difficulty
   cost?: number
   servings?: number
-  ingredients: { name: string; unit: string; quantity: number }[]
+  ingredients: { name: string; unit: string; quantity: number; cost?: number }[]
   tags: { title: string }[]
 }
 
@@ -67,11 +67,11 @@ export class CreateRecipeUseCase {
     })
 
     await Promise.all(
-      ingredients.map(async ({ name, quantity, unit }) => {
+      ingredients.map(async ({ name, quantity, unit, cost }) => {
         let ingredient = await this.ingredientsRepository.findByName(name)
 
         if (!ingredient) {
-          ingredient = await this.ingredientsRepository.create({ name })
+          ingredient = await this.ingredientsRepository.create({ name, cost })
         }
 
         if (!ingredient || ingredient == null) {

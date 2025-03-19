@@ -1,21 +1,18 @@
-import { expectTypeOf, expect, describe, it, beforeEach } from 'vitest'
+import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { InMemoryIngredientsRepository } from '@/repositories/in-memory/in-memory-ingredients-repository'
-import { IngredientsRepository } from '@/repositories/ingredients-repository'
-import { TagsRepository } from '@/repositories/tags-repository'
 import { InMemoryTagsRepository } from '@/repositories/in-memory/in-memory-tags-repository'
 import { InMemoryRecipesRepository } from '@/repositories/in-memory/in-memory-recipes-repository'
 import { CreateRecipeUseCase } from '@/use-cases/recipes/create'
 import { InMemoryIngredientsOnRecipesRepository } from '@/repositories/in-memory/in-memory-ingredients-on-recipes-repository'
-import { createUserData } from '@/utils/test/factories/user-data'
 import { CreateRecipeData } from '@/utils/test/factories/recipe-data copy'
 import { Decimal } from '@prisma/client/runtime/library'
 
 let usersRepository: InMemoryUsersRepository
 let recipesRepository: InMemoryRecipesRepository
-let ingredientsRepository: IngredientsRepository
+let ingredientsRepository: InMemoryIngredientsRepository
 let ingredientsOnRecipesRepository: InMemoryIngredientsOnRecipesRepository
-let tagsRepository: TagsRepository
+let tagsRepository: InMemoryTagsRepository
 let sut: CreateRecipeUseCase
 
 describe('Create Recipe Use Case', () => {
@@ -35,7 +32,7 @@ describe('Create Recipe Use Case', () => {
     )
   })
 
-  it.only('should be able to create recipe', async () => {
+  it('should be able to create recipe', async () => {
     const createRecipeData = new CreateRecipeData(usersRepository)
     const recipeData = await createRecipeData.execute()
 
@@ -55,123 +52,76 @@ describe('Create Recipe Use Case', () => {
     expect(recipe.cost).toBeInstanceOf(Decimal)
   })
 
-  it('should be able to create ingredient upon dish creation', async () => {
-    const userData = createUserData()
+  it('should be able to create ingredient upon recipe creation', async () => {
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
+    await sut.execute(recipeData)
 
-    await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
+    const ingredient = await ingredientsRepository.findByName(
+      recipeData.ingredients[0].name,
+    )
+
+    expect(ingredient?.name).toEqual(recipeData.ingredients[0].name)
+    expect(ingredient).toMatchObject({
+      id: expect.any(String),
+      name: recipeData.ingredients[0].name,
     })
-
-    const ingredient =
-      await ingredientsRepository.findByName('Dish ingredient 1')
-
-    expect(ingredient?.name).toEqual('Dish ingredient 1')
+    expect(ingredient?.cost).toBeInstanceOf(Decimal)
   })
 
   it('should not be able to create ingredient, if it already exists', async () => {
-    const userData = randomUserData()
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
-
-    await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
-    })
+    await sut.execute(recipeData)
 
     expect(
       await ingredientsRepository.create({
         id: 'ingredient-id',
-        name: 'Dish ingredient 1',
+        name: recipeData.ingredients[0].name,
       }),
     ).toBe(null)
   })
 
-  it('should be able to create tag, upon dish creation', async () => {
-    const userData = randomUserData()
+  it('should be able to create tag, upon recipe creation', async () => {
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
+    await sut.execute(recipeData)
 
-    await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
+    const tag = await tagsRepository.findByTitle(recipeData.tags[0].title)
+
+    expect(tag?.title).toEqual(recipeData.tags[0].title)
+    expect(tag).toMatchObject({
+      id: expect.any(String),
+      title: recipeData.tags[0].title,
     })
-
-    const tag = await tagsRepository.findByTitle('Tag title')
-
-    expect(tag?.title).toEqual('Tag title')
   })
 
   it('should not be able to create tag, if it already exists', async () => {
-    const userData = randomUserData()
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
-
-    await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
-    })
+    await sut.execute(recipeData)
 
     expect(
       await tagsRepository.create({
         id: 'tag-id',
-        title: 'Tag title',
+        title: recipeData.tags[0].title,
       }),
     ).toBe(null)
   })
 
-  it('should be able to create table of ingredients on dishes, connecting ingredients with dish ', async () => {
-    const userData = randomUserData()
+  it('should be able to create table of ingredients on recipes, connecting ingredients with recipe ', async () => {
+    const createRecipeData = new CreateRecipeData(usersRepository)
+    const recipeData = await createRecipeData.execute()
 
-    const user = await usersRepository.create(userData)
+    const { recipe } = await sut.execute(recipeData)
+    const ingredientsOnRecipe =
+      await ingredientsOnRecipesRepository.findByRecipeId(recipe.id)
 
-    const { dish } = await sut.execute({
-      name: 'Dish name',
-      instructions: 'Dish instructions',
-      description: 'Dish description',
-      userId: user.id,
-      ingredients: [
-        { name: 'Dish ingredient 1', quantity: 1 },
-        { name: 'Dish ingredient 2', quantity: 1 },
-      ],
-      tags: [{ title: 'Tag title' }],
-    })
-
-    const ingredientsOnDish = await ingredientsOnDishesRepository.findByDishId(
-      dish.id,
-    )
-
-    expect(ingredientsOnDish).not.toBeNull()
-    expect(ingredientsOnDish![0].id).toEqual(expect.any(String))
+    expect(ingredientsOnRecipe).not.toBeNull()
+    expect(ingredientsOnRecipe![0].id).toEqual(expect.any(String))
   })
 })

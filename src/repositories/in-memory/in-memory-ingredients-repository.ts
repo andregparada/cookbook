@@ -12,7 +12,10 @@ export class InMemoryIngredientsRepository implements IngredientsRepository {
     const ingredient = {
       id: randomUUID(),
       name: data.name,
-      cost: data.cost instanceof Decimal ? new Decimal(data.cost) : null,
+      cost:
+        data.cost !== undefined && data.cost !== null
+          ? new Decimal(data.cost.toString())
+          : null,
     }
 
     this.items.push(ingredient)
