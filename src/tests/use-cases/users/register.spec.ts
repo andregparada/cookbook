@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import { compare } from 'bcryptjs'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 import { RegisterUseCase } from '@/use-cases/users/register'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
@@ -15,20 +15,28 @@ describe('Register Use Case', () => {
   })
 
   it('should be able to register', async () => {
-    const userData = createUserData()
+    const userData = makeUser()
 
     const { user } = await sut.execute({
       ...userData,
-      password: '1233456',
+      password: '123456',
     })
 
     expect(user.id).toEqual(expect.any(String))
-    expect(user.userName).toEqual(userData.userName)
+    expect(user.id.length).toBeGreaterThan(0)
+    expect(user).toMatchObject({
+      userName: userData.userName,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      isActive: true,
+    })
+    expect(user.createdAt).toBeInstanceOf(Date)
+    expect(user.updatedAt).toBeInstanceOf(Date)
   })
 
   it('should hash user password upon registration', async () => {
-    const userData = createUserData()
-
+    const userData = makeUser()
     const password = '123456'
 
     const { user } = await sut.execute({
@@ -36,22 +44,25 @@ describe('Register Use Case', () => {
       password,
     })
 
-    const isPasswordCorrectlyHashed = await compare(password, user.passwordHash)
+    expect(user.passwordHash).toEqual(expect.any(String))
+    expect(user.passwordHash.length).toBeGreaterThan(0)
+    expect(user.passwordHash).not.toBe(password)
 
+    const isPasswordCorrectlyHashed = await compare(password, user.passwordHash)
     expect(isPasswordCorrectlyHashed).toBe(true)
   })
 
-  it('should not be able to register with same email and username twice', async () => {
-    const userData = createUserData()
+  it('should not be able to register with same email or username twice', async () => {
+    const userData = makeUser()
 
     const registerData = {
       ...userData,
-      password: '1233456',
+      password: '123456',
     }
 
     await sut.execute(registerData)
 
-    await expect(() => sut.execute(registerData)).rejects.toBeInstanceOf(
+    await expect(sut.execute(registerData)).rejects.toBeInstanceOf(
       UserAlreadyExistsError,
     )
   })

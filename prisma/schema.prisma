@@ -61,10 +61,10 @@ model Recipe {
 }
 
 model Ingredient {
-  id                 String               @id @default(uuid())
-  name               String               @unique @db.VarChar(100)
-  cost               Decimal?
-  IngredientOnRecipe IngredientOnRecipe[]
+  id      String               @id @default(uuid())
+  name    String               @unique @db.VarChar(100)
+  cost    Decimal?
+  recipes IngredientOnRecipe[]
 
   @@index([name])
   @@map("ingredients")
@@ -74,8 +74,7 @@ model Tag {
   id    String @id @default(uuid())
   title String @unique
 
-  Recipe   Recipe? @relation(fields: [recipeId], references: [id])
-  recipeId String?
+  recipes Recipe[]
 
   @@index([title])
   @@map("tags")

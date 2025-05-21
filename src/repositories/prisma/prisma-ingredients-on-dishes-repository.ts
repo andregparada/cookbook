@@ -1,25 +1,25 @@
 import { Prisma } from '@prisma/client'
-import { IngredientsOnDishesRepository } from '../ingredients-on-recipes-repository'
+import { IngredientsOnRecipesRepository } from '../ingredients-on-recipes-repository'
 import { prisma } from '@/lib/prisma'
 
-export class PrismaIngredientsOnDishesRepository
-  implements IngredientsOnDishesRepository
+export class PrismaIngredientsOnRecipesRepository
+  implements IngredientsOnRecipesRepository
 {
-  async create(data: Prisma.IngredientsOnDishesUncheckedCreateInput) {
-    const ingredientsOnDish = await prisma.ingredientsOnDishes.create({
+  async create(data: Prisma.IngredientsOnRecipesUncheckedCreateInput) {
+    const ingredientsOnRecipes = await prisma.ingredientsOnRecipes.create({
       data,
     })
 
-    return ingredientsOnDish
+    return ingredientsOnRecipes
   }
 
-  async findByDishId(dishId: string) {
-    const ingedientsOnDish = await prisma.ingredientsOnDishes.findMany({
+  async findByRecipesId(recipesId: string) {
+    const ingedientsOnRecipes = await prisma.ingredientsOnRecipes.findMany({
       where: {
-        dish_id: dishId,
+        recipes_id: recipesId,
       },
     })
 
-    return ingedientsOnDish
+    return ingedientsOnRecipes
   }
 }

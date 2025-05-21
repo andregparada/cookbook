@@ -52,7 +52,7 @@ export class CreateRecipeData {
 }
 
 // ver parametros
-// export function randomUserAndDishData(): { user: User; dish: Dish } {
+// export function randomUserAndRecipeData(): { user: User; recipe: Recipe } {
 //   const userName = faker.person.fullName()
 //   const email = faker.internet.email({ firstName: userName })
 //   const userId = faker.string.uuid()
@@ -66,9 +66,9 @@ export class CreateRecipeData {
 //       created_at: new Date(),
 //       role: 'MEMBER',
 //     },
-//     dish: {
+//     recipe: {
 //       id: faker.string.uuid(),
-//       name: faker.food.dish(),
+//       name: faker.food.recipe(),
 //       description: faker.food.description(),
 //       instructions: faker.food.description(),
 //       user_id: userId,

@@ -1,7 +1,7 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
 import { hash } from 'bcryptjs'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 import { faker } from '@faker-js/faker'
 import { AuthenticateUseCase } from '@/use-cases/users/authenticate'
 import { InvalidCredentialsError } from '@/use-cases/errors/invalid-credentials-error'
@@ -16,15 +16,15 @@ describe('Authenticate Use Case', () => {
   })
 
   it('should be able to authenticate', async () => {
-    const userData = createUserData()
+    const user = makeUser()
 
     await usersRepository.create({
-      ...userData,
+      ...user,
       passwordHash: await hash('123456', 6),
     })
 
     const { user } = await sut.execute({
-      email: userData.email,
+      email: user.email,
       password: '123456',
     })
 
@@ -42,13 +42,13 @@ describe('Authenticate Use Case', () => {
   })
 
   it('should not be able to authenticate with wrong password', async () => {
-    const userData = createUserData()
+    const user = makeUser()
 
-    await usersRepository.create(userData)
+    await usersRepository.create(user)
 
     await expect(() =>
       sut.execute({
-        email: userData.email,
+        email: user.email,
         password: '000000',
       }),
     ).rejects.toBeInstanceOf(InvalidCredentialsError)

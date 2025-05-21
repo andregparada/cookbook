@@ -62,7 +62,7 @@ export class UpdateUserUseCase {
       lastName: lastName || user.lastName,
       userName: userName || user.userName,
       email: email || user.email,
-      passwordHash: passwordHash || user.passwordHash,
+      passwordHash,
     })
 
     return {

@@ -119,7 +119,7 @@ describe('Create Recipe Use Case', () => {
 
     const { recipe } = await sut.execute(recipeData)
     const ingredientsOnRecipe =
-      await ingredientsOnRecipesRepository.findByRecipeId(recipe.id)
+      await ingredientsOnRecipesRepository.findManyByRecipeId(recipe.id)
 
     expect(ingredientsOnRecipe).not.toBeNull()
     expect(ingredientsOnRecipe![0].id).toEqual(expect.any(String))

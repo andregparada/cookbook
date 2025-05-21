@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 import { DeleteUserUseCase } from '@/use-cases/users/delete'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
 
@@ -14,7 +14,7 @@ describe('Delete User Use Case', () => {
   })
 
   it('should be able to delete an user', async () => {
-    const userData = createUserData()
+    const userData = makeUser()
 
     const user = await usersRepository.create(userData)
 

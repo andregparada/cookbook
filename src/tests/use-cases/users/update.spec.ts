@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 import { UpdateUserUseCase } from '@/use-cases/users/update'
 import { UserAlreadyExistsError } from '@/use-cases/errors/user-already-exists-error'
 
@@ -14,7 +14,7 @@ describe('Update User Use Case', () => {
   })
 
   it('should be able to update an user', async () => {
-    const userData = createUserData()
+    const userData = makeUser()
 
     const user = await usersRepository.create(userData)
 
@@ -33,8 +33,8 @@ describe('Update User Use Case', () => {
   })
 
   it('should not be able to update email to a existing one', async () => {
-    const firstUserData = createUserData()
-    const secondUserData = createUserData()
+    const firstUserData = makeUser()
+    const secondUserData = makeUser()
 
     await usersRepository.create(firstUserData)
     const secondUser = await usersRepository.create(secondUserData)
@@ -48,8 +48,8 @@ describe('Update User Use Case', () => {
   })
 
   it('should not be able to update username to a existing one', async () => {
-    const firstUserData = createUserData()
-    const secondUserData = createUserData()
+    const firstUserData = makeUser()
+    const secondUserData = makeUser()
 
     await usersRepository.create(firstUserData)
     const secondUser = await usersRepository.create(secondUserData)

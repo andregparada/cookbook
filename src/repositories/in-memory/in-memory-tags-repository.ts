@@ -4,7 +4,7 @@ import { randomUUID } from 'crypto'
 
 export class InMemoryTagsRepository implements TagsRepository {
   public items: Tag[] = []
-  public tagConnections: { tagId: string; dishId: string }[] = []
+  public tagConnections: { tagId: string; recipeId: string }[] = []
 
   async create(data: Prisma.TagUncheckedCreateInput) {
     if (await this.findByTitle(data.title)) return null
@@ -20,8 +20,8 @@ export class InMemoryTagsRepository implements TagsRepository {
     return tag
   }
 
-  async connect(tagId: string, dishId: string) {
-    this.tagConnections.push({ tagId, dishId })
+  async connect(tagId: string, recipeId: string) {
+    this.tagConnections.push({ tagId, recipeId })
   }
 
   async findByTitle(title: string) {

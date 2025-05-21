@@ -21,7 +21,7 @@ export class InMemoryIngredientsOnRecipesRepository
     return ingredientOnRecipe
   }
 
-  async findByRecipeId(recipeId: string) {
+  async findManyByRecipeId(recipeId: string) {
     const ingredientsOnRecipe = this.items.filter(
       (item) => item.recipeId === recipeId,
     )

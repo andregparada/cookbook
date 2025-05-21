@@ -2,13 +2,13 @@ import { prisma } from '@/lib/prisma'
 import { hash } from 'bcryptjs'
 import { FastifyInstance } from 'fastify'
 import request from 'supertest'
-import { createUserData } from './factories/user-data'
+import { makeUser } from './factories/make-user'
 
 export async function createAndAuthenticateUser(
   app: FastifyInstance,
   isAdmin = false,
 ) {
-  const userData = createUserData()
+  const userData = makeUser()
 
   await prisma.user.create({
     data: {

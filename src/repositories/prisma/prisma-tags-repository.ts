@@ -11,9 +11,9 @@ export class PrismaTagsRepository implements TagsRepository {
     return tag
   }
 
-  async connect(tagId: string, dishId: string) {
-    await prisma.dish.update({
-      where: { id: dishId },
+  async connect(tagId: string, recipeId: string) {
+    await prisma.recipe.update({
+      where: { id: recipeId },
       data: {
         tags: {
           connect: { id: tagId },

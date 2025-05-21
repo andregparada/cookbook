@@ -1,13 +1,13 @@
 import { Prisma } from '@prisma/client'
-import { DishesRepository } from '../recipes-repository'
+import { RecipesRepository } from '../recipes-repository'
 import { prisma } from '@/lib/prisma'
 
-export class PrismaDishesRepository implements DishesRepository {
-  async create(data: Prisma.DishUncheckedCreateInput) {
-    const dish = await prisma.dish.create({
+export class PrismaRecipesRepository implements RecipesRepository {
+  async create(data: Prisma.RecipeUncheckedCreateInput) {
+    const recipe = await prisma.recipe.create({
       data,
     })
 
-    return dish
+    return recipe
   }
 }

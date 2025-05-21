@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker'
 import { User } from '@prisma/client'
 
-export function createUserData(): User {
+export function makeUser(override?: Partial<User>): User {
   const firstName = faker.person.firstName()
   const lastName = faker.person.lastName()
   const email = faker.internet.email({ firstName, lastName })
@@ -18,5 +18,6 @@ export function createUserData(): User {
     deletedAt: null,
     role: 'MEMBER',
     isActive: true,
+    ...override,
   }
 }

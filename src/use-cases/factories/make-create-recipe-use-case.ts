@@ -1,22 +1,22 @@
 import { PrismaUsersRepository } from '@/repositories/prisma/prisma-users-repository'
-import { PrismaIngredientsRepository } from '@/repositories/prisma/prisma-dishes-repository'
+import { PrismaIngredientsRepository } from '@/repositories/prisma/prisma-recipes-repository'
 import { PrismaIngredientsRepository } from '@/repositories/prisma/prisma-ingredients-repository'
 import { PrismaTagsRepository } from '@/repositories/prisma/prisma-tags-repository'
-import { PrismaIngredientsOnDishesRepository } from '@/repositories/prisma/prisma-ingredients-on-dishes-repository'
+import { PrismaIngredientsOnRecipesRepository } from '@/repositories/prisma/prisma-ingredients-on-recipes-repository'
 import { CreateRecipeUseCase } from '../recipes/create'
 
 export function makeCreateRecipeUseCase() {
   const usersRepository = new PrismaUsersRepository()
-  const dishesRepository = new PrismaReci()
+  const recipesRepository = new PrismaReci()
   const ingredientsRepository = new PrismaIngredientsRepository()
   const tagsRepository = new PrismaTagsRepository()
-  const ingredientsOnDishesRepository =
-    new PrismaIngredientsOnDishesRepository()
+  const ingredientsOnRecipesRepository =
+    new PrismaIngredientsOnRecipesRepository()
   const useCase = new CreateRecipeUseCase(
     usersRepository,
-    dishesRepository,
+    recipesRepository,
     ingredientsRepository,
-    ingredientsOnDishesRepository,
+    ingredientsOnRecipesRepository,
     tagsRepository,
   )
 

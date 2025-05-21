@@ -1,7 +1,7 @@
 import request from 'supertest'
 import { app } from '@/app'
 import { describe, it, expect, beforeAll, afterAll } from 'vitest'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 
 describe('Register (e2e)', () => {
   beforeAll(async () => {
@@ -13,12 +13,12 @@ describe('Register (e2e)', () => {
   })
 
   it('should be able to register', async () => {
-    const userData = createUserData()
+    const user = makeUser()
 
     const response = await request(app.server)
       .post('/users')
       .send({
-        ...userData,
+        ...user,
         password: '123456',
       })
 

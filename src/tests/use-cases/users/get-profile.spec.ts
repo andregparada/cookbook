@@ -1,6 +1,6 @@
 import { expect, describe, it, beforeEach } from 'vitest'
 import { InMemoryUsersRepository } from '@/repositories/in-memory/in-memory-users-repository'
-import { createUserData } from '@/utils/test/factories/user-data'
+import { makeUser } from '@/utils/test/factories/make-user'
 import { GetUserProfileUseCase } from '@/use-cases/users/get-profile'
 import { ResourceNotFoundError } from '@/use-cases/errors/resource-not-found-error'
 
@@ -14,7 +14,7 @@ describe('Get User Profile Use Case', () => {
   })
 
   it('should be able to get user profile', async () => {
-    const userData = createUserData()
+    const userData = makeUser()
 
     const createdUser = await usersRepository.create(userData)
 
